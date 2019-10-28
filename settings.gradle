@@ -1,0 +1,2 @@
+include ':app', ':jsbridge-annotation', ':jsbridge-compiler', ':jsbridge-core'
+rootProject.name='JsBridge'

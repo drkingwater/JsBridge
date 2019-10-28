@@ -1,0 +1,43 @@
+<html>
+<body>
+
+
+<input type="button" value="无数据" onclick="call()" style="height:40px;" >
+<p>
+<input type="button" value="带数据" onclick="callWithData()" style="height:40px;">
+</p>
+<p>
+<input type="button" value="默认处理(UnHandle)" onclick="callUnHandle()" style="height:40px;">
+</p>
+<p>
+<input type="button" value="错误处理(Error)" onclick="callError()" style="height:40px;">
+</p>
+<script>
+function call(){
+    var x = "{\"action\":\"test\"}"
+    callAndroid(x);
+}
+
+function callWithData() {
+    var x = "{\"action\":\"testData\", \"data\": {\"name\" : \"pxq\", \"data\" : \"testdata\"}}"
+    callAndroid(x);
+}
+
+function callUnHandle() {
+    var x = "{\"action\":\"UnHandleTest\", \"data\": {\"name\" : \"pxq\"}}"
+    callAndroid(x);
+}
+
+function callError() {
+    var x = "{\"actions\":\"UnHandleTest\", \"data\": {\"name\" : \"pxq\"}}"
+    callAndroid(x);
+}
+
+function callAndroid(x) {
+    window.android.request(x);
+}
+
+</script>
+
+</body>
+</html>
