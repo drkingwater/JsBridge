@@ -48,3 +48,8 @@ public class BridgeTest {
 
 }
 ```
+
+## 绑定
+```
+JsBridge.bind(webView, new BridgeTest());
+```
