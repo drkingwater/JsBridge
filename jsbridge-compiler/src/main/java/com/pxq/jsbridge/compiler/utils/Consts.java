@@ -28,8 +28,15 @@ public class Consts {
     //json解析工具类
     static String PARSER_PACKAGE = "com.pxq.jsbridge.core.utils";
     static String PARSER_CLASS_NAME = "JsonParser";
-    //方法
+    static String FAST_JSON_PARSER_CLASS_NAME = "FastJsonParser";
+    static String IPARSER_CLASS_NAME = "IJsonParser";
+    public static String IPARSER_INTERFACE = PARSER_PACKAGE + "." + IPARSER_CLASS_NAME;
+    //持有的parser成员变量名
+    static String JSON_PARSER_FIELD_NAME = "mActionParser";
+
+    //Json解析方法
     static String PARSER_METHOD_GET_ACTION = "getAction";
+    static String PARSER_METHOD_GET_DATA = "getData";
     static String PARSER_METHOD_PARSE = "parse";
 
 }

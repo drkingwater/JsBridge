@@ -37,6 +37,8 @@ public class JsBridgeGenerator {
     //Js Request未处理时，默认调用的方法,即@UnHandle处理
     private Element mUnHandleElement;
 
+    private Element mJsonParserElement;
+
     private void init() {
         mJsErrorElement = null;
         mUnHandleElement = null;
@@ -47,6 +49,15 @@ public class JsBridgeGenerator {
     }
 
 
+    public void setJsonParserElement(Element jsonParserElement){
+        mJsonParserElement = jsonParserElement;
+    }
+
+    /**
+     * 生成JsBridge交互类
+     * @param filer
+     * @throws IOException
+     */
     public void generate(Filer filer) throws IOException {
         init();
         Bridge bridge = mBridgeElement.getAnnotation(Bridge.class);
@@ -57,14 +68,22 @@ public class JsBridgeGenerator {
 
         //持有一个处理对象
         FieldSpec mHandlerField = FieldSpec.builder(TypeName.get(mBridgeElement.asType()), Consts.JS_FIELD_HANDLER_NAME, Modifier.PUBLIC).build();
-
+        //创建一个json解析类
+        ClassName iParserClassName = ClassName.get(Consts.PARSER_PACKAGE, Consts.IPARSER_CLASS_NAME);
+        FieldSpec mParserField = FieldSpec.builder(iParserClassName, Consts.JSON_PARSER_FIELD_NAME, Modifier.PRIVATE).build();
         //生成构造方法给handler赋值
-        MethodSpec constructMethod = MethodSpec.constructorBuilder()
+        MethodSpec.Builder constructMethodBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(TypeName.get(mBridgeElement.asType()), Consts.JS_FIELD_HANDLER_NAME)
-                .addStatement("this.$N = " + Consts.JS_FIELD_HANDLER_NAME, mHandlerField)
-                .build();
-
+                .addStatement("this.$N = " + Consts.JS_FIELD_HANDLER_NAME, mHandlerField);//mHandler赋值
+        //给mJsonParser赋值
+        if (mJsonParserElement == null){
+            //使用默认的json解析
+            constructMethodBuilder.addStatement("this.$N = new $T()", mParserField, ClassName.get(Consts.PARSER_PACKAGE, Consts.FAST_JSON_PARSER_CLASS_NAME));
+        } else {
+            constructMethodBuilder.addStatement("this.$N = new $T()", mParserField, mJsonParserElement.asType());
+        }
+        MethodSpec constructMethod = constructMethodBuilder.build();
         //生成request处理方法
         MethodSpec mHandleMethod = generateHandleMethod(className, mHandlerField);
 
@@ -83,6 +102,7 @@ public class JsBridgeGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ClassName.get(Consts.JS_BRIDGE_NAME_INTERFACE_PACKAGE, Consts.JS_BRIDGE_NAME_INTERFACE_CLASSNAME))  //IJsBridge接口
                 .addField(mHandlerField)
+                .addField(mParserField)
                 .addMethod(constructMethod)
                 .addMethod(jsMethod)
                 .addMethod(jsNameMethod)
@@ -93,6 +113,8 @@ public class JsBridgeGenerator {
         JavaFile.builder(packageName, jsClass)
                 .build()
                 .writeTo(filer);
+
+
     }
 
     /**
@@ -105,9 +127,9 @@ public class JsBridgeGenerator {
         MethodSpec.Builder builder = MethodSpec.methodBuilder(Consts.JS_HANDLE_METHOD_NAME)
                 .addParameter(TypeName.get(String.class), Consts.JS_BRIDGE_METHOD_PARAM)
                 //生成 String action = JsonParse.getAction(request)
-                .addStatement("String $N = $T.$N($N)",
+                .addStatement("String $N = $N.$N($N)",
                         Consts.VAR_ACTION_NAME,
-                        ClassName.get(Consts.PARSER_PACKAGE, Consts.PARSER_CLASS_NAME),
+                        Consts.JSON_PARSER_FIELD_NAME,
                         Consts.PARSER_METHOD_GET_ACTION,
                         Consts.JS_BRIDGE_METHOD_PARAM);
                 //添加一个Log打印 Log.e(TAG, request)
@@ -142,12 +164,12 @@ public class JsBridgeGenerator {
                 } else if (executableElement.getParameters().size() == 1) {
                     VariableElement variableElement = executableElement.getParameters().get(0);
                     //生成case "action" : JsonParse.parse(request, Class);
-                    builder.addStatement("case $S: \n$N.$N($T.$N($N, $T.class))",
+                    builder.addStatement("case $S: \n$N.$N($N.$N($N, $T.class))",
                             jsAction.value(),
                             mHandlerField,
                             executableElement.getSimpleName(),
-                            ClassName.get(Consts.PARSER_PACKAGE, Consts.PARSER_CLASS_NAME),
-                            Consts.PARSER_METHOD_PARSE,
+                            Consts.JSON_PARSER_FIELD_NAME,
+                            Consts.PARSER_METHOD_GET_DATA,
                             Consts.JS_BRIDGE_METHOD_PARAM,
                             ClassName.get(variableElement.asType()));
                 } else {

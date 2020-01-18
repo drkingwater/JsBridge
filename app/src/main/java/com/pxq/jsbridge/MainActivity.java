@@ -17,5 +17,6 @@ public class MainActivity extends AppCompatActivity {
         JsBridge.bind(webView, new BridgeTest());
         setContentView(webView);
         webView.loadUrl("file:///android_asset/test.html");
+
     }
 }
