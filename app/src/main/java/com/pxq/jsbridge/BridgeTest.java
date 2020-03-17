@@ -9,7 +9,7 @@ import com.pxq.jsbridge.annotation.JsError;
 import com.pxq.jsbridge.annotation.UnHandle;
 
 @Bridge(name = "android")
-@JsConfig(jsMethod = "call", paramsName = "data")
+@JsConfig(jsMethod = "call", actionName = "function", paramsName = "data")
 public class BridgeTest {
 
     private static final String TAG = "BridgeTest";
@@ -34,7 +34,5 @@ public class BridgeTest {
     public void error(String request, Exception e){
         Log.e(TAG, "error: " +request, e);
     }
-
-
 
 }
