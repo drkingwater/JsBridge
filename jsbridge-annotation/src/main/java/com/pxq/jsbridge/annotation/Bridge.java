@@ -16,7 +16,5 @@ import java.lang.annotation.Target;
 public @interface Bridge {
     //js交互名
     String name();
-    //交互方法
-    String jsMethod();
 
 }

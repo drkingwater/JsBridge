@@ -1,5 +1,6 @@
 package com.pxq.jsbridge;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
@@ -20,21 +21,11 @@ public class ObjParser implements IJsonParser {
     private static final String TAG = "ObjParser";
 
     @Override
-    public String getAction(String json) {
-        Log.e(TAG, "getAction: " + json);
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            return jsonObject.getString("action");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
     public <T> T getData(String json, Class<T> clazz) {
         Log.e(TAG, "getData: " + json);
-        return JSON.parseObject(JSON.parseObject(json).getString("data"), clazz);
+        if (TextUtils.isEmpty(json)){
+            return null;
+        }
+        return JSON.parseObject(json, clazz);
     }
 }

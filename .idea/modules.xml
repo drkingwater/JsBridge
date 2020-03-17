@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidStudioProjects-JsBridge.iml" filepath="$PROJECT_DIR$/AndroidStudioProjects-JsBridge.iml" group="JsBridge" />
       <module fileurl="file://$PROJECT_DIR$/JsBridge.iml" filepath="$PROJECT_DIR$/JsBridge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/JsBridge-app.iml" filepath="$PROJECT_DIR$/app/JsBridge-app.iml" group="JsBridge/app" />
+      <module fileurl="file://$PROJECT_DIR$/jsbridge-annotation/JsBridge-jsbridge-annotation.iml" filepath="$PROJECT_DIR$/jsbridge-annotation/JsBridge-jsbridge-annotation.iml" group="JsBridge/jsbridge-annotation" />
+      <module fileurl="file://$PROJECT_DIR$/jsbridge-compiler/JsBridge-jsbridge-compiler.iml" filepath="$PROJECT_DIR$/jsbridge-compiler/JsBridge-jsbridge-compiler.iml" group="JsBridge/jsbridge-compiler" />
+      <module fileurl="file://$PROJECT_DIR$/jsbridge-core/JsBridge-jsbridge-core.iml" filepath="$PROJECT_DIR$/jsbridge-core/JsBridge-jsbridge-core.iml" group="JsBridge/jsbridge-core" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/jsbridge-annotation/jsbridge-annotation.iml" filepath="$PROJECT_DIR$/jsbridge-annotation/jsbridge-annotation.iml" />
       <module fileurl="file://$PROJECT_DIR$/jsbridge-compiler/jsbridge-compiler.iml" filepath="$PROJECT_DIR$/jsbridge-compiler/jsbridge-compiler.iml" />

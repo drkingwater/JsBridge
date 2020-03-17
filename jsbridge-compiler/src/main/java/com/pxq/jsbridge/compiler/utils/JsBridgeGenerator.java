@@ -2,6 +2,7 @@ package com.pxq.jsbridge.compiler.utils;
 
 import com.pxq.jsbridge.annotation.Bridge;
 import com.pxq.jsbridge.annotation.JsAction;
+import com.pxq.jsbridge.annotation.JsConfig;
 import com.pxq.jsbridge.annotation.JsError;
 import com.pxq.jsbridge.annotation.UnHandle;
 import com.squareup.javapoet.ClassName;
@@ -36,12 +37,15 @@ public class JsBridgeGenerator {
     private ExecutableElement mJsErrorElement;
     //Js Request未处理时，默认调用的方法,即@UnHandle处理
     private Element mUnHandleElement;
-
+    //自定义Json 解析类
     private Element mJsonParserElement;
+
+    private BridgeWrapper mBridgeWrapper;
 
     private void init() {
         mJsErrorElement = null;
         mUnHandleElement = null;
+        mBridgeWrapper = null;
     }
 
     public void setBridgeElement(Element bridgeElement) {
@@ -60,45 +64,43 @@ public class JsBridgeGenerator {
      */
     public void generate(Filer filer) throws IOException {
         init();
-        Bridge bridge = mBridgeElement.getAnnotation(Bridge.class);
-        String jsName = bridge.name();
-        String jsMethodName = bridge.jsMethod();
-        String className = mBridgeElement.getSimpleName().toString() + Consts.JS_BRIDGE_SUFFIX;
-        String packageName = mBridgeElement.getEnclosingElement().toString();
+        // 1、获取Bridge配置信息
+        mBridgeWrapper = getBridgeWrapper(mBridgeElement);
 
-        //持有一个处理对象
+        // 2、生成一个js请求处理对象
         FieldSpec mHandlerField = FieldSpec.builder(TypeName.get(mBridgeElement.asType()), Consts.JS_FIELD_HANDLER_NAME, Modifier.PUBLIC).build();
-        //创建一个json解析类
-        ClassName iParserClassName = ClassName.get(Consts.PARSER_PACKAGE, Consts.IPARSER_CLASS_NAME);
-        FieldSpec mParserField = FieldSpec.builder(iParserClassName, Consts.JSON_PARSER_FIELD_NAME, Modifier.PRIVATE).build();
         //生成构造方法给handler赋值
         MethodSpec.Builder constructMethodBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(TypeName.get(mBridgeElement.asType()), Consts.JS_FIELD_HANDLER_NAME)
                 .addStatement("this.$N = " + Consts.JS_FIELD_HANDLER_NAME, mHandlerField);//mHandler赋值
+        // 3、创建一个json解析类
+        ClassName iParserClassName = ClassName.get(Consts.PARSER_PACKAGE, Consts.IPARSER_CLASS_NAME);
+        FieldSpec mParserField = FieldSpec.builder(iParserClassName, Consts.JSON_PARSER_FIELD_NAME, Modifier.PRIVATE).build();
         //给mJsonParser赋值
         if (mJsonParserElement == null){
             //使用默认的json解析
             constructMethodBuilder.addStatement("this.$N = new $T()", mParserField, ClassName.get(Consts.PARSER_PACKAGE, Consts.FAST_JSON_PARSER_CLASS_NAME));
         } else {
+            //使用自定义json解析
             constructMethodBuilder.addStatement("this.$N = new $T()", mParserField, mJsonParserElement.asType());
         }
         MethodSpec constructMethod = constructMethodBuilder.build();
-        //生成request处理方法
-        MethodSpec mHandleMethod = generateHandleMethod(className, mHandlerField);
+        // 4、生成request处理方法
+        MethodSpec mHandleMethod = generateHandleMethod(mBridgeWrapper.getClassName(), mHandlerField);
 
         //生成获取js名的方法
         MethodSpec jsNameMethod = MethodSpec.methodBuilder(Consts.JS_BRIDGE_METHOD_NAME)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(String.class)
-                .addStatement("return $S", jsName)
+                .addStatement("return $S", mBridgeWrapper.getBridgeName())
                 .build();
 
         //生成js交互方法
-        MethodSpec jsMethod = generateJsMethod(jsMethodName, mHandlerField, mHandleMethod);
+        MethodSpec jsMethod = generateJsMethod(mBridgeWrapper.getJsConfig().getMethodName(), mHandlerField, mHandleMethod);
 
         //生成js交互类
-        TypeSpec jsClass = TypeSpec.classBuilder(className)
+        TypeSpec jsClass = TypeSpec.classBuilder(mBridgeWrapper.getClassName())  //类名
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ClassName.get(Consts.JS_BRIDGE_NAME_INTERFACE_PACKAGE, Consts.JS_BRIDGE_NAME_INTERFACE_CLASSNAME))  //IJsBridge接口
                 .addField(mHandlerField)
@@ -110,11 +112,38 @@ public class JsBridgeGenerator {
                 .build();
 
         //生成类文件
-        JavaFile.builder(packageName, jsClass)
+        JavaFile.builder(mBridgeWrapper.getPackageName(), jsClass)
                 .build()
                 .writeTo(filer);
 
 
+    }
+
+    /**
+     * 获取bridge信息
+     * @param element
+     * @return
+     */
+    private BridgeWrapper getBridgeWrapper(Element element){
+        Bridge bridge = element.getAnnotation(Bridge.class);
+        String bridgeName = bridge.name();
+        String className = element.getSimpleName().toString() + Consts.JS_BRIDGE_SUFFIX;
+        String packageName = element.getEnclosingElement().toString();
+        JsConfigWrapper config = getConfig(element);
+        return new BridgeWrapper(bridgeName, packageName, className, config);
+    }
+
+    /**
+     * 获取js配置信息
+     * @param element
+     * @return
+     */
+    private JsConfigWrapper getConfig(Element element){
+        JsConfig jsConfig = element.getAnnotation(JsConfig.class);
+        if (jsConfig == null){
+            return new JsConfigWrapper(Consts.JS_CONFIG_METHOD, Consts.JS_CONFIG_ACTION_NAME, Consts.JS_CONFIG_PARAMS_NAME);
+        }
+        return new JsConfigWrapper(jsConfig.jsMethod(), jsConfig.actionName(), jsConfig.paramsName());
     }
 
     /**
@@ -127,21 +156,19 @@ public class JsBridgeGenerator {
         MethodSpec.Builder builder = MethodSpec.methodBuilder(Consts.JS_HANDLE_METHOD_NAME)
                 .addParameter(TypeName.get(String.class), Consts.JS_BRIDGE_METHOD_PARAM)
                 //生成 String action = JsonParse.getAction(request)
-                .addStatement("String $N = $N.$N($N)",
+                .addStatement("$T $N = $T.$N($N, $S, $S)",
+                        ClassName.get(Consts.REQUEST_WRAPPER_PACKAGE, Consts.REQUEST_WRAPPER_CLASS),
                         Consts.VAR_ACTION_NAME,
-                        Consts.JSON_PARSER_FIELD_NAME,
-                        Consts.PARSER_METHOD_GET_ACTION,
-                        Consts.JS_BRIDGE_METHOD_PARAM);
-                //添加一个Log打印 Log.e(TAG, request)
-//                .addStatement("$T.e($S, $N)",
-//                        ClassName.get("android.util", "Log"),
-//                        className,
-//                        Consts.VAR_ACTION_NAME);
+                        ClassName.get(Consts.REQUEST_WRAPPER_PACKAGE, Consts.REQUEST_WRAPPER_CLASS),
+                        Consts.REQUEST_WRAPPER_GETTER,
+                        Consts.JS_BRIDGE_METHOD_PARAM,
+                        mBridgeWrapper.getJsConfig().getActionName(),
+                        mBridgeWrapper.getJsConfig().getParamsName());
         //填充方法
         TypeElement typeElement = (TypeElement) mBridgeElement;
         //开始switch
         if (!CollectionUtils.isEmpty(typeElement.getEnclosedElements())) {
-            builder.beginControlFlow("switch($N)", Consts.VAR_ACTION_NAME);
+            builder.beginControlFlow("switch($N.$N())", Consts.VAR_ACTION_NAME, Consts.REQUEST_WRAPPER_GET_ACTION);
         }
         for (Element element : typeElement.getEnclosedElements()) {
             JsAction jsAction = element.getAnnotation(JsAction.class);
@@ -164,13 +191,14 @@ public class JsBridgeGenerator {
                 } else if (executableElement.getParameters().size() == 1) {
                     VariableElement variableElement = executableElement.getParameters().get(0);
                     //生成case "action" : JsonParse.parse(request, Class);
-                    builder.addStatement("case $S: \n$N.$N($N.$N($N, $T.class))",
+                    builder.addStatement("case $S: \n$N.$N($N.$N($N.$N(), $T.class))",
                             jsAction.value(),
                             mHandlerField,
                             executableElement.getSimpleName(),
                             Consts.JSON_PARSER_FIELD_NAME,
                             Consts.PARSER_METHOD_GET_DATA,
-                            Consts.JS_BRIDGE_METHOD_PARAM,
+                            Consts.VAR_ACTION_NAME,
+                            Consts.REQUEST_WRAPPER_GET_PARAMS,
                             ClassName.get(variableElement.asType()));
                 } else {
                     builder.addStatement("case $S: \n$N.$N()", jsAction.value(), mHandlerField, executableElement.getSimpleName());

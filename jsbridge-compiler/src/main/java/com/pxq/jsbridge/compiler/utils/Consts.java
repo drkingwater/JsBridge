@@ -4,6 +4,11 @@ public class Consts {
 
     static String PREFIX_OF_LOGGER = "JsBridge>>>";
 
+    //默认的js方法配置
+    static String JS_CONFIG_METHOD = "request";
+    static String JS_CONFIG_ACTION_NAME = "action";
+    static String JS_CONFIG_PARAMS_NAME = "params";
+
     //generate
     //生成的js交互类后缀
     static String JS_BRIDGE_SUFFIX = "$$Bridge";
@@ -15,7 +20,15 @@ public class Consts {
     static final String JS_FIELD_HANDLER_NAME = "mHandler";
     static final String JS_HANDLE_METHOD_NAME = "handleRequest";
 
-    static final String VAR_ACTION_NAME = "action";
+    static final String VAR_ACTION_NAME = "requestWrapper";
+
+    //js请求封装类
+    static final String REQUEST_WRAPPER_PACKAGE = "com.pxq.jsbridge.core.utils";
+    static final String REQUEST_WRAPPER_CLASS = "RequestWrapper";
+    static final String REQUEST_WRAPPER_GETTER = "get";
+    static final String REQUEST_WRAPPER_GET_ACTION = "getAction";
+    static final String REQUEST_WRAPPER_GET_PARAMS = "getParams";
+
 
     //interface
     static String ANNOTATION_JSINTERFACE_PACKAGE = "android.webkit";

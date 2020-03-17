@@ -4,10 +4,12 @@ import android.util.Log;
 
 import com.pxq.jsbridge.annotation.Bridge;
 import com.pxq.jsbridge.annotation.JsAction;
+import com.pxq.jsbridge.annotation.JsConfig;
 import com.pxq.jsbridge.annotation.JsError;
 import com.pxq.jsbridge.annotation.UnHandle;
 
-@Bridge(name = "android", jsMethod = "request")
+@Bridge(name = "android")
+@JsConfig(jsMethod = "call", paramsName = "data")
 public class BridgeTest {
 
     private static final String TAG = "BridgeTest";

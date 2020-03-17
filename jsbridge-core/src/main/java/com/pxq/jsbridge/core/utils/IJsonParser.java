@@ -7,8 +7,13 @@ package com.pxq.jsbridge.core.utils;
  */
 public interface IJsonParser {
 
-    String getAction(String json);
-
+    /**
+     * 解析params字段
+     * @param json 交互json中的params字段，可能为空
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     <T> T getData(String json, Class<T> clazz);
 
 }

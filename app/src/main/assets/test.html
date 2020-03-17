@@ -24,17 +24,17 @@ function callWithData() {
 }
 
 function callUnHandle() {
-    var x = "{\"action\":\"UnHandleTest\", \"data\": {\"name\" : \"pxq\"}}"
+    var x = "{\"action\":\"UnHandleTest\", \"params\": {\"name\" : \"pxq\"}}"
     callAndroid(x);
 }
 
 function callError() {
-    var x = "{\"actions\":\"ErrorTest\", \"data\": {\"name\" : \"pxq\"}}"
+    var x = "{\"actions\":\"ErrorTest\", \"params\": {\"name\" : \"pxq\"}}"
     callAndroid(x);
 }
 
 function callAndroid(x) {
-    window.android.request(x);
+    window.android.call(x);
 }
 
 </script>

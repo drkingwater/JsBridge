@@ -5,7 +5,7 @@ import android.webkit.JavascriptInterface;
 import com.pxq.jsbridge.annotation.Bridge;
 import com.pxq.jsbridge.annotation.UnHandle;
 
-@Bridge(name = "android", jsMethod = "action")
+@Bridge(name = "android")
 public class TestBridge {
 
     @UnHandle
