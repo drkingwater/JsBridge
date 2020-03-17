@@ -20,7 +20,8 @@ annotationProcessor project(':jsbridge-compiler')
 
 ## 编写实现类
 ```
-@Bridge(name = "android", jsMethod = "request")
+@Bridge(name = "android") //window.andriod
+@JsConfig(jsMethod = "call", actionName = "function", paramsName = "data") //window.android.call()
 public class BridgeTest {
 
     private static final String TAG = "BridgeTest";
@@ -45,8 +46,9 @@ public class BridgeTest {
     public void error(String request, Exception e){
         Log.e(TAG, "error: " +request, e);
     }
-
+    
 }
+
 ```
 
 ## 绑定
