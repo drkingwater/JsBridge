@@ -20,7 +20,7 @@ annotationProcessor project(':jsbridge-compiler')
 
 ## 编写实现类
 ```java
-@Bridge(name = "android") //window.andriod
+@Bridge("android") //window.andriod
 @JsConfig(jsMethod = "call", actionName = "function", paramsName = "data") //window.android.call()
 public class BridgeTest {
 
