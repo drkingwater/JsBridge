@@ -47,7 +47,7 @@ public class BridgeTest {
         Log.e(TAG, "error: " +request, e);
     }
     
-    @JsFunc
+    @JsFunc("func")
     public String func(String request){
         return "func data";
     }
@@ -63,8 +63,15 @@ JsBridge.bind(webView, new BridgeTest());
 
 ## web调用方式
 ```javascript
-window.android.call(json);
-//同步方式
-window.android.callSync(json);
+//无返回值
+function call(){
+    var json = "{\"function\":\"test\", \"data\": {\"name\" : \"pxq\"}}"
+    window.androidSync.request(json);
+}
+//同步调用
+function callSync(){
+    var json = "{\"function\":\"func\", \"data\": {\"name\" : \"pxq\"}}"
+    var result = window.androidSync.requestSync(json);
+}
 ```
 
