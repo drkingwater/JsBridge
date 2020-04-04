@@ -135,7 +135,7 @@ public class JsBridgeGenerator {
      */
     private BridgeConfigWrapper getBridgeWrapper(Element element) {
         Bridge bridge = element.getAnnotation(Bridge.class);
-        String bridgeName = bridge.name();
+        String bridgeName = bridge.value();
         String className = element.getSimpleName().toString() + Consts.JS_BRIDGE_SUFFIX;
         String packageName = element.getEnclosingElement().toString();
         JsConfigWrapper config = getConfig(element);

@@ -8,7 +8,7 @@ import com.pxq.jsbridge.annotation.JsConfig;
 import com.pxq.jsbridge.annotation.JsError;
 import com.pxq.jsbridge.annotation.UnHandle;
 
-@Bridge(name = "android")
+@Bridge("android")
 @JsConfig(jsMethod = "call", actionName = "function", paramsName = "data")
 public class BridgeTest {
 

@@ -8,7 +8,7 @@ import com.pxq.jsbridge.annotation.JsError;
 import com.pxq.jsbridge.annotation.JsFunc;
 import com.pxq.jsbridge.annotation.UnHandle;
 
-@Bridge(name = "androidSync")
+@Bridge("androidSync")
 @JsConfig
 public class TestBridge {
 

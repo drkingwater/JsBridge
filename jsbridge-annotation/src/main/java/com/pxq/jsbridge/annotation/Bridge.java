@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Bridge {
     //js交互名
-    String name();
+    String value();
 
 }
