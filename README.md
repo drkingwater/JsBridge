@@ -2,7 +2,7 @@
 web和原生app交互简单封装
 # 使用方法
 ## 交互数据约束
-```
+```json
 {
     "action" : “XXXX”,
     "data" : {
@@ -13,13 +13,13 @@ web和原生app交互简单封装
 ```
 ## 添加依赖
 
-```
+```java
 implementation project(':jsbridge-core')
 annotationProcessor project(':jsbridge-compiler')
 ```
 
 ## 编写实现类
-```
+```java
 @Bridge(name = "android") //window.andriod
 @JsConfig(jsMethod = "call", actionName = "function", paramsName = "data") //window.android.call()
 public class BridgeTest {
@@ -57,7 +57,7 @@ public class BridgeTest {
 ```
 
 ## 绑定
-```
+```java
 JsBridge.bind(webView, new BridgeTest());
 ```
 
