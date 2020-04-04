@@ -66,12 +66,12 @@ JsBridge.bind(webView, new BridgeTest());
 //无返回值
 function call(){
     var json = "{\"function\":\"test\", \"data\": {\"name\" : \"pxq\"}}"
-    window.android.request(json);
+    window.android.call(json);
 }
 //同步调用
 function callSync(){
     var json = "{\"function\":\"func\", \"data\": {\"name\" : \"pxq\"}}"
-    var result = window.android.requestSync(json);
+    var result = window.android.callSync(json);
 }
 ```
 
