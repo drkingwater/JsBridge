@@ -47,6 +47,11 @@ public class BridgeTest {
         Log.e(TAG, "error: " +request, e);
     }
     
+    @JsFunc
+    public String func(String request){
+        return "func data";
+    }
+    
 }
 
 ```
@@ -55,3 +60,11 @@ public class BridgeTest {
 ```
 JsBridge.bind(webView, new BridgeTest());
 ```
+
+## web调用方式
+```javascript
+window.android.call(json);
+//同步方式
+window.android.callSync(json);
+```
+
