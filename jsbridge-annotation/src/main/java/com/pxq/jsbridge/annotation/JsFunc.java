@@ -1,21 +1,19 @@
 package com.pxq.jsbridge.annotation;
 
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * js请求android端的action（action : 无返回值的请求）
- * author : pxq
- * date : 19-10-24 下午9:38
+ * Description: 标记处理js同步请求的方法的注解(function : 返回值为String的请求)
+ * Author : pxq
+ * Date : 2020/4/4 7:53 PM
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface JsAction {
+public @interface JsFunc {
 
-    //action名
+    //function名
     String value();
-
 }

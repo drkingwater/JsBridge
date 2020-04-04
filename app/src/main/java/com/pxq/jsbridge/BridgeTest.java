@@ -31,8 +31,8 @@ public class BridgeTest {
     }
 
     @JsError
-    public void error(String request, Exception e){
-        Log.e(TAG, "error: " +request, e);
+    public void error(String request){
+        Log.e(TAG, "error: " +request);
     }
 
 }

@@ -23,6 +23,14 @@ public class JsConfigWrapper {
         return mMethodName;
     }
 
+    /**
+     * 同步方法
+     * @return
+     */
+    public String getSyncMethodName(){
+        return mMethodName + Consts.JS_METHOD_REQUEST_SYNC_SUFFIX;
+    }
+
     public void setMethodName(String methodName) {
         mMethodName = methodName;
     }

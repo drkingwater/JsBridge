@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import com.pxq.jsbridge.annotation.ActionParser;
 import com.pxq.jsbridge.annotation.Bridge;
 import com.pxq.jsbridge.annotation.JsAction;
+import com.pxq.jsbridge.annotation.JsFunc;
 import com.pxq.jsbridge.compiler.utils.Consts;
 import com.pxq.jsbridge.compiler.utils.JsBridgeGenerator;
 import com.pxq.jsbridge.compiler.utils.Logger;
@@ -48,6 +49,8 @@ public class JsBridgeProcessor extends BaseProcessor {
         Set<Class<? extends Annotation>> annotationsSet = new LinkedHashSet<>();
         annotationsSet.add(Bridge.class);
         annotationsSet.add(ActionParser.class);
+        annotationsSet.add(JsAction.class);
+        annotationsSet.add(JsFunc.class);
         return annotationsSet;
     }
 

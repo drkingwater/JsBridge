@@ -3,9 +3,13 @@ package com.pxq.jsbridge;
 import android.webkit.JavascriptInterface;
 
 import com.pxq.jsbridge.annotation.Bridge;
+import com.pxq.jsbridge.annotation.JsConfig;
+import com.pxq.jsbridge.annotation.JsError;
+import com.pxq.jsbridge.annotation.JsFunc;
 import com.pxq.jsbridge.annotation.UnHandle;
 
-@Bridge(name = "android")
+@Bridge(name = "androidSync")
+@JsConfig
 public class TestBridge {
 
     @UnHandle
@@ -13,19 +17,20 @@ public class TestBridge {
 
     }
 
-    @JavascriptInterface
-    public void func(){
+    @JsFunc("func")
+    public String func(){
+        return "test return data";
+    }
+
+    @UnHandle
+    public void unhandle(String json){
 
     }
 
-    @JavascriptInterface
-    public void func(int a, int b){
+    @JsError
+    public void errors(String json){
 
     }
 
-    @JavascriptInterface
-    public void func1(int a, String b){
-
-    }
 
 }

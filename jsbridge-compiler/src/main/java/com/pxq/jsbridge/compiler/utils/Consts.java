@@ -5,9 +5,13 @@ public class Consts {
     static String PREFIX_OF_LOGGER = "JsBridge>>>";
 
     //默认的js方法配置
-    static String JS_CONFIG_METHOD = "request";
-    static String JS_CONFIG_ACTION_NAME = "action";
-    static String JS_CONFIG_PARAMS_NAME = "params";
+    static final String JS_CONFIG_METHOD = "request";
+    static final String JS_CONFIG_ACTION_NAME = "action";
+    static final String JS_CONFIG_PARAMS_NAME = "params";
+    //生成的js同步请求方法的后缀，如方法名为request,则同步方法名为requestSync
+    static final String JS_METHOD_REQUEST_SYNC_SUFFIX = "Sync";
+    //默认的js同步请求返回值
+    static final String JS_SYNC_METHOD_RETURN = "";
 
     //generate
     //生成的js交互类后缀
@@ -18,7 +22,10 @@ public class Consts {
     static final String JS_BRIDGE_METHOD_PARAM = "request";
     //持有的处理对象名
     static final String JS_FIELD_HANDLER_NAME = "mHandler";
+    //处理js请求的方法
     static final String JS_HANDLE_METHOD_NAME = "handleRequest";
+    //处理js同步请求的方法
+    static final String JS_HANDLE_SYNC_METHOD_NAME = "handleRequest" + JS_METHOD_REQUEST_SYNC_SUFFIX;
 
     static final String VAR_ACTION_NAME = "requestWrapper";
 

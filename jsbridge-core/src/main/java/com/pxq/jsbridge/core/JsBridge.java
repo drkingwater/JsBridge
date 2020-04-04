@@ -1,8 +1,12 @@
 package com.pxq.jsbridge.core;
 
 import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebView;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Webview绑定JsBridge工具类
@@ -15,19 +19,65 @@ public class JsBridge {
 
     private static final String JS_BRIDGE_SUFFIX = "$$Bridge";
 
-    @SuppressLint({"JavascriptInterface", "SetJavaScriptEnabled"})
-    public static void bind(WebView webView, Object bridge){
-        String className = bridge.getClass().getCanonicalName() + JS_BRIDGE_SUFFIX;
-        Log.e(TAG, "bind: " + className);
+    private static WeakReference<WebView> mWebViewRef;
+
+    private static Handler sHandler = new Handler(Looper.getMainLooper());
+
+    /**
+     * 向webview添加处理器，允许多个
+     * @param webView
+     * @param handlers
+     */
+    @SuppressLint({"SetJavaScriptEnabled"})
+    public static void bind(WebView webView, Object... handlers){
         try {
-            Class<?> jsBridgeClazz = Class.forName(className);
-            IJsBridge jsBridge = (IJsBridge) jsBridgeClazz.getConstructor(bridge.getClass()).newInstance(bridge);
-            Log.e(TAG, "bind: " + jsBridge.getName());
+            mWebViewRef = new WeakReference<>(webView);
             webView.getSettings().setJavaScriptEnabled(true);
-            webView.addJavascriptInterface(jsBridge, jsBridge.getName());
+            for (Object handler : handlers) {
+                addJavascriptInterface(webView, handler);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 向webview添加处理器
+     * @param webView
+     * @param handler
+     * @throws Exception
+     */
+    @SuppressLint("JavascriptInterface")
+    private static void addJavascriptInterface(WebView webView, Object handler) throws Exception{
+        String className = handler.getClass().getCanonicalName() + JS_BRIDGE_SUFFIX;
+        Class<?> jsBridgeClazz = Class.forName(className);
+        IJsBridge jsBridge = (IJsBridge) jsBridgeClazz.getConstructor(handler.getClass()).newInstance(handler);
+        webView.addJavascriptInterface(jsBridge, jsBridge.getName());
+        Log.d(TAG, "addJavascriptInterface: " + jsBridge.getName());
+    }
+
+    /**
+     * java调用js方法
+     * @param function
+     * @param params
+     */
+    public static void callJS(final String function, final String params){
+        if (mWebViewRef != null && mWebViewRef.get() != null){
+            sHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mWebViewRef.get().loadUrl(String.format("javascript:%s('%s')", function, params));
+                }
+            });
+
+        }
+    }
+
+    public static void unbind(){
+        if (mWebViewRef != null){
+            mWebViewRef.clear();
+        }
+        mWebViewRef = null;
     }
 
 }

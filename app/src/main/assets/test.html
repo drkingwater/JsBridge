@@ -12,6 +12,9 @@
 <p>
 <input type="button" value="错误处理(Error)" onclick="callError()" style="height:40px;">
 </p>
+<p>
+    <input type="button" value="同步请求" onclick="callSync()" style="height:40px;">
+</p>
 <script>
 function call(){
     var x = "{\"action\":\"test\"}"
@@ -35,6 +38,12 @@ function callError() {
 
 function callAndroid(x) {
     window.android.call(x);
+}
+
+function callSync(){
+    var x = "{\"action\":\"func\", \"params\": {\"name\" : \"pxq\"}}"
+    var result = window.androidSync.requestSync(x);
+    console.info("callSync return : " + result);
 }
 
 </script>
