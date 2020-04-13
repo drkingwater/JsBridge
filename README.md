@@ -74,4 +74,19 @@ function callSync(){
     var result = window.android.callSync(json);
 }
 ```
+## 混淆规则
+```java
+#保持注解不被混淆
+-keepattributes *Annotation*
+-keep class * extends annotation.Annotation{*;}
+#保持@Bridge注解的类不被混淆
+-keepnames @com.pxq.jsbridge.annotation.Bridge class *
+#保持生成的类不被混淆
+-keep class **$$Bridge {
+    #保留构造方法
+    <init>(...);
+    #保留交互方法
+    @android.webkit.Javascriptinterface <method>;
+}
+```
 
