@@ -77,8 +77,7 @@ function callSync(){
 ## 混淆规则
 ```java
 #保持注解不被混淆
--keepattributes *Annotation*
--keep class * extends annotation.Annotation{*;}
+-keep class com.pxq.jsbridge.annotation.Bridge
 #保持@Bridge注解的类不被混淆
 -keepnames @com.pxq.jsbridge.annotation.Bridge class *
 #保持生成的类不被混淆
