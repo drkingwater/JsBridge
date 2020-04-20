@@ -79,7 +79,7 @@ function callSync(){
 #保持注解不被混淆
 -keep class com.pxq.jsbridge.annotation.Bridge
 #保持@Bridge注解的类不被混淆
--keepnames @com.pxq.jsbridge.annotation.Bridge class *
+-keep @com.pxq.jsbridge.annotation.Bridge class *
 #保持生成的类不被混淆
 -keep class **$$Bridge {
     #保留构造方法
