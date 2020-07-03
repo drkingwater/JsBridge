@@ -18,6 +18,8 @@ android {
     }
     lintOptions {
         abortOnError false
+        //不生成xml报告
+        xmlReport false
     }
 
 }
